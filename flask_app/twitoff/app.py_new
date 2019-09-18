@@ -1,0 +1,21 @@
+"""
+Main application and routing logic for TwitOff.
+"""
+
+from flask import Flask, render_template, request
+from .models import DB, User
+
+
+def create_app():
+    """create and config an instance of the flask application."""
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = config('DATABASE_URL')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['ENV'] = config('ENV')  # TODO remove before deploying to heroku
+    DB.init_app(app)
+
+    @app.route('/')
+    def root():
+        users = User.query.all()
+        return render_template('base.html', title="HOME PAGE", users=users)
+    return app
